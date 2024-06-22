@@ -6,48 +6,11 @@ os.system('cls')
 
 # es un numero correlativo (folio=folio+1)
 # Folio comienza desde folio=10000
-catalogo = [ [1001,"206h","Cessna","2006","55-60 lt/hr",2, 2.010,1680],
-#          0       1       2      3         4         5     6     7
-           [1002,"182d","Cessna","1961","55 lt/hr",3, 6.616,1240],
-#           8       9       10      11      12     13   14    15    
-           [1003,"pa-28-236", "Dakota Piper","1982","50-55 lt/hr",1,  4.028,950],
-#           16             17         18      19       20       21    22
-           [1004,"G-164A","Grumman","1072","80 lt/hr",1, 9.777,720], 
-#           23    24        25        26       27     28    29   30
-           [1005,"152","Cessna","1980","25 lt/hr",3, 6.602,1050],
-#           31    32      33      34      35      36   37    38 
-           [1006,"Hunter T MK.7","Hawker","1959","70 lt/hr", 2, 46092, 159738250] ,
-#           39    40      41      42        43       44     45    46    47
-           [1007,"Vision SF50-G2","Cirrus","2019","58 lt/hr",1,  655.5, 20000],
-#           48         49            50     51       52      53   54    55
-           [1008,"Falco F8L","Sequoia","1985","60 lt/hr",3,  795.7, 16000],
-#           56       57         58       59      60      61   62    63
-           [1009,"L-39C Albatros","Aero","1981","73 lt/hr",2,  288.5, 28000],
-#           64          65          66     67      68      69   70     71
-           [1010,"C212-100","Casa","1974","96 lt/hr",1,  8000,36000]]
+catalogo = [ ]
 
 #       folio,  fecha id,cantidad, total
 # 20 Ventas
-ventas = [ [10001, "20-05-2024","1002", 10625],
-        [10002, "02-05-2024","1006", 18871],
-        [10003, "09-05-2024","1002", 11085],
-        [10004, "29-05-2024","1006", 12496],
-        [10005, "07-05-2024","1003", 4376],
-        [10006, "15-05-2024","1007", 16731],
-        [10007, "01-05-2024","1005", 8110],
-        [10008, "20-05-2024","1005", 17859],
-        [10009, "18-05-2024","1009", 7314],
-        [10010, "22-05-2024","1005", 4316],
-        [10011, "08-05-2024","1002", 16667],
-        [10012, "08-05-2024","1008", 13024],
-        [10013, "01-05-2024","1006", 17948],
-        [10014, "08-05-2024","1002", 5969],
-        [10015, "12-05-2024","1009", 10671],
-        [10016, "07-05-2024","1007", 5255],
-        [10017, "14-05-2024","1004", 6182],
-        [10018, "27-05-2024","1007", 5293],
-        [10019, "12-05-2024","1009", 17233],
-        [10020, "27-05-2024","1007", 17382] ]
+ventas = [ ]
 
 # Nombre del productos
 productos = 'CatalogoAviones.txt'
@@ -231,29 +194,7 @@ def validar_fecha(fechas):
 
 fecha = datetime.now().strftime('%d-%m-%Y')
 
-#funcion fechas 
-def validar_fecha(fecha):
-    partes = fecha.split('-')
-    if len(partes) != 3:
-        return False
-    
-    dia, mes, año = partes
-    
-    if not (dia.isdigit() and mes.isdigit() and año.isdigit()):
-        return False
-    
-    dia = int(dia)
-    mes = int(mes)
-    año = int(año)
-    
-    if dia < 1 or dia > 31:
-        return False
-    if mes < 1 or mes > 12:
-        return False
-    if año <= 2000:
-        return False
-    
-    return True
+
 
 opcion = 0
 while opcion != 5:
@@ -345,8 +286,8 @@ while opcion != 5:
 
             case 2: # REPORTES
                 while True:
-                   
-                    
+                    os.system("cls")
+                    print(pyfiglet.figlet_format("vender aeronaves \n"))
                     print('''
                     1. general de ventas
                     2. ventas por fecha especifica
