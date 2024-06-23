@@ -86,11 +86,12 @@ def eliminar(id):
 def imprimir_datos(lista_datos):
     campos_por_avion = 8
     for i in range(0, len(lista_datos), campos_por_avion):
-        print(f'ID: {lista_datos[i]}, Modelo: {lista_datos[i+1]}, Marca: {lista_datos[i+2]}, Año: {lista_datos[i+3]}, Consumo: {lista_datos[i+4]}, Cantidad de motores: {lista_datos[i+5]}, Horas de vuelo: {lista_datos[i+6]}, Precio: {lista_datos[i+7]}')
+        print(f'ID: {lista_datos[i]}, Modelo: {lista_datos[i+1]}, Marca: {lista_datos[i+2]}, Año: {lista_datos[i+3]}, Consumo: {lista_datos[i+4]}, unidades: {lista_datos[i+5]}, Horas de vuelo: {lista_datos[i+6]}, Precio: {lista_datos[i+7]}')
 
 def agregar_datos(id, modelo, marca, año, consumo, unidades, horas_totales, precio):
+    producto = f"{id},{modelo},{marca},{año},{consumo},{unidades},{horas_totales},{precio}\n"
     with open(productos, 'a') as file:
-        file.write(f'\n{id},{modelo},{marca},{año},{consumo},{unidades},{horas_totales},{precio}')
+        file.write(producto)
 
 def modificar(id_a_modificar, nuevo_modelo, nueva_marca, nuevo_año, nuevo_consumo, nueva_unidad, nueva_horas_totales, nuevo_precio):
     lista_datos_actualizada = []
@@ -116,10 +117,10 @@ def modificar(id_a_modificar, nuevo_modelo, nueva_marca, nuevo_año, nuevo_consu
     return 1
 
 def cargar_datos():
-    global catalogo, ventas
     catalogo = leer_datos_productos(productos)
     ventas = leer_datos_ventas(archivo_ventas)
     print('Datos cargados correctamente!')
+    return catalogo, ventas
 
 def respaldar_datos():
     with open(productos, 'w') as file:
@@ -130,16 +131,16 @@ def respaldar_datos():
             file.write(f'{venta[0]},{venta[1]},{venta[2]},{venta[3]}\n')
     print('Datos respaldados correctamente!')
 
-def buscar_venta(venta):
+def buscar_venta(fecha):
     lista_ventas = leer_datos_ventas(archivo_ventas)
     for v in lista_ventas:
-        if v[0] == venta:
-            return v
-    return -1
+        if v[1] == fecha:
+            return f"Los datos de la venta son: Folio: {v[0]}, Fecha: {v[1]} , ID Producto: {v[2]}, Total: ${v[3]}"
+    return "Venta no encontrada, ingrese una fecha valida"
 
 def imprimir_ventas(lista_ventas):
     for v in lista_ventas:
-        print(f"Venta: {v[0]}, Fecha: {v[1]}, ID Producto: {v[2]}, Total: {v[3]}")
+        print(f"Folio: {v[0]}, Fecha: {v[1]}, ID Producto: {v[2]}, Total: ${v[3]}")
 
 def agregar_venta(fecha, id_producto, total):
     global folio
@@ -155,7 +156,7 @@ def agregar_venta(fecha, id_producto, total):
 
 def eliminar_venta(venta):
     lista_ventas_actualizada = []
-    existe = buscar_venta(venta)
+    existe = buscar_venta(ventas)
     if existe != -1:
         lista_ventas = leer_datos_ventas(archivo_ventas)
         for v in lista_ventas:
@@ -191,6 +192,128 @@ def validar_fecha(fechas):
     
     return True
 
+def validar_datos(catalogo):
+    while True:
+        try:
+            id = int(input('Ingrese el id del avion (4 caracteres): '))
+        except ValueError:
+            print("Error, el ID deben ser caracteres numéricos")
+            continue
+        if len(str(id)) != 4:
+            print('Error, el ID debe tener 4 caracteres numéricos.')
+            continue
+        if any(productos[0] == id for producto in catalogo):
+            print('Error, el ID ingresado ya existe en el catálogo.')
+            continue
+        modelo = input('Ingrese el modelo del avion: ')
+        if not modelo:
+            print('Error, el modelo no puede estar vacío.')
+            continue
+        marca = input('Ingrese la marca del avion: ')
+        if not marca:
+            print('Error, la marca no puede estar vacía.')
+            continue
+        try:
+            año = int(input('Ingrese el año del avion: '))
+        except ValueError:
+            print('Error, el año debe ser numérico.')
+            continue
+        consumo = input('Ingrese el consumo del avion (xx lt/hr): ')
+        if not consumo:
+            print('Error, el consumo no puede estar vacío.')
+            continue
+        try:
+            unidades = int(input('Ingrese las unidades que existen del avion (>= 0): '))
+            if unidades < 0:
+                print('Error, las unidades deben ser mayor o igual a 0.')
+                continue
+        except ValueError:
+            print('Error, las unidades deben ser un número entero.')
+            continue
+        try:
+            horas_totales = int(input('Ingrese las horas totales del avion: '))
+        except ValueError:
+            print('Error, las horas totales deben ser un número entero.')
+            continue
+        try:
+            precio = int(input('Ingrese el precio del avion: '))
+            if precio < 0:
+                print('Error, el precio debe ser mayor o igual a 0.')
+                continue
+        except ValueError:
+            print('Error, el precio debe ser un número entero.')
+            continue
+        return id, modelo, marca, año, consumo, unidades, horas_totales, precio
+
+def menu_vender():
+    while True:
+        if len(catalogo) == 0:
+            print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
+            os.system('pause')
+            break
+        else:
+            print(pyfiglet.figlet_format("vender aeronaves \n"))
+            print('catalogo de aeronaves:')
+            lista_datos = leer_datos_productos(productos)
+            imprimir_datos(lista_datos)
+            try:
+                id = int(input('Ingrese el ID del avion a comprar: '))
+            except ValueError:
+                os.system("cls")
+                print('Error, ingrese un ID valido (solo numeros)')
+                os.system('pause')
+                os.system("cls")
+                continue
+            lista = buscar(id)
+            if lista == -1:
+                os.system("cls")
+                print('Error, ID no valido, por favor, seleccione un ID existente')
+                os.system('pause')
+                os.system("cls")
+                continue
+            else:
+                print('\nCaracteristicas del avion a comprar:\n')
+                print(f'''Modelo: {lista['Modelo']} ; Marca: {lista['Marca']} ; Año: {lista['Año']} ; Consumo: {lista['Consumo']} ; Unidades: {lista['Unidades']} ; Horas Totales: {lista['Horas de vuelo']} ; Precio: ${lista['Precio']}''')
+                try:
+                    cantidad_comprar = int(input('¿Cuantas unidades desea comprar?: '))
+                except ValueError:
+                    print('Error, ingrese una cantidad valida')
+                    continue
+                if cantidad_comprar > lista['Unidades']:
+                    os.system('cls')
+                    decision = input('Stock no valido, desea volver a intentarlo? (si/no): ')
+                    if decision.lower() == 'si':
+                        continue
+                    elif decision.lower() == 'no':
+                        os.system('cls')
+                        break
+                elif cantidad_comprar <= lista['Unidades']:
+                    total_compra = cantidad_comprar * lista['Precio']
+                    decision = input(f"\n¿Desea confirmar la compra de {cantidad_comprar} unidades de un {lista['Marca']} {lista['Modelo']} por un total de ${total_compra}? (si/no): ")
+                    if decision.lower() == 'si':
+                        lista['Unidades'] -= cantidad_comprar
+                        fecha = datetime.now().strftime('%d-%m-%Y')
+                        agregar_venta(fecha, id, total_compra)
+                        modificar(id, lista['Modelo'], lista['Marca'], lista['Año'], lista['Consumo'], lista['Unidades'], lista['Horas de vuelo'], lista['Precio'])
+                        os.system('cls')
+                        print(f'La compra de {cantidad_comprar} {lista["Marca"]} {lista["Modelo"]} por ${total_compra} se ha completado y ha sido registrada.')
+                        if lista['Unidades'] <= 0:
+                            eliminar(id)
+                        decision = input('¿Desea comprar otro producto? (si/no): ')
+                        if decision.lower() == 'si':
+                            continue
+                        elif decision.lower() == 'no':
+                            os.system('cls')
+                            break
+                    elif decision.lower() == 'no':
+                        os.system('cls')
+                        decision = input('compra cancelada, desea volver a intentarlo? (si/no): ')
+                        if decision.lower() == 'si':
+                            continue
+                        elif decision.lower() == 'no':
+                            os.system('cls')
+                            break
+
 
 fecha = datetime.now().strftime('%d-%m-%Y')
 
@@ -216,73 +339,7 @@ while opcion != 5:
         opcion = int(input('Ingrese una opcion entre 1-5: '))
         match opcion:
             case 1: #VENTA DE PRODUCTOS
-                while True:
-                    if len(productos) == 0:
-                        
-                        print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
-                        os.system('pause')
-                        break
-                    else:
-                        print(pyfiglet.figlet_format("vender aeronaves \n"))
-                       
-                        print('catalogo de aeronaves:')
-                        while sw == 0:
-                            imprimir_datos(catalogo)
-                            try:
-                                id = int(input('Ingrese el ID del avion a comprar: '))
-                            except ValueError:
-                                print('Error, ingrese un ID valido (solo numeros)')
-                                os.system('pause')
-                                continue
-                            lista = buscar(id)
-                            if lista == -1:
-                                print('Error, ID no valido')
-                            else:
-                                print('\nCaracteristicas del avion a comprar:\n')
-                                print(f'''Modelo: {lista['Modelo']} Marca: {lista['Marca']} Año: {lista['Año']} Consumo: {lista['Consumo']} Unidades: {lista['Unidades']} Horas Totales: {lista['Horas de vuelo']} Precio: ${lista['Precio']}''')
-                                try:
-                                    cantidad_comprar = int(input('¿Cuantas unidades desea comprar?: '))
-                                except ValueError:
-                                    print('Error, ingrese una cantidad valida')
-                                    continue
-                                if cantidad_comprar <= lista['Unidades']:
-                                    total_compra = cantidad_comprar * lista['Precio']
-                                    decision = input(f"\n¿Desea confirmar la compra de {cantidad_comprar} unidades de un {lista['Marca']} {lista['Modelo']} por un total de ${total_compra}? (si/no): ")
-                                    if decision.lower() == 'si':
-                                        lista['Unidades'] -= cantidad_comprar
-                                        fecha = datetime.now().strftime('%d-%m-%Y')
-                                        agregar_venta(fecha, id, total_compra)
-                                        modificar(id, lista['Modelo'], lista['Marca'], lista['Año'], lista['Consumo'], lista['Unidades'], lista['Horas de vuelo'], lista['Precio'])
-                                        os.system('cls')
-                                        print(f'La compra de {cantidad_comprar} {lista["Marca"]} {lista["Modelo"]} por ${total_compra} se ha completado y ha sido registrada.')
-                                        if lista['Unidades'] <= 0:
-                                            eliminar(id)
-                                        decision = input('¿Desea comprar otro producto? (si/no): ')
-                                        if decision.lower() == 'si':
-                                            sw = 0
-                                        elif decision.lower() == 'no':
-                                            os.system('cls')
-                                            sw = 1
-                                            break
-                                    elif decision.lower() == 'no':
-                                        os.system('cls')
-                                        decision = input('compra cancelada, desea volver a intentarlo? (si/no): ')
-                                        if decision.lower() == 'si':
-                                            sw = 0
-                                        elif decision.lower() == 'no':
-                                            os.system('cls')
-                                            sw = 1
-                                            break
-                                else:
-                                    os.system('cls')
-                                    decision = input('Stock no valido, desea volver a intentarlo? (si/no): ')
-                                    if decision.lower() == 'si':
-                                        continue
-                                    elif decision.lower() == 'no':
-                                        os.system('cls')
-                                        break
-                        if sw != 0:
-                            break   
+                menu_vender()
 
             case 2: # REPORTES
                 while True:
@@ -296,6 +353,7 @@ while opcion != 5:
                     ''')
                     op = int(input('Ingrese una opción entre 1-4: '))
                     if op == 1:
+                        os.system("cls")
                         if len(ventas) == 0:
                             print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                         else:
@@ -303,27 +361,27 @@ while opcion != 5:
                         os.system('pause')
 
                     elif op == 2:
+                        os.system("cls")
                         if len(ventas) == 0:
                             print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                         else:
                             while True:
                                 fecha = input('Ingrese la fecha (dd-mm-yyyy): ')
                                 # Validar formatos incorrectos
-                                if "/" in fecha or len(fecha) == 4:
+                                if "/" in fecha or len(fecha) != 10:
+                                    os.system("cls")
                                     print("Error, debe ingresar la fecha con este formato (dd-mm-yyyy)")
                                     continue
                                 # Validar el formato correcto de la fecha
                                 else:
-                                    ventas_fecha = [venta for venta in ventas if venta[1] == fecha]
-                                    if ventas_fecha:
-                                        imprimir_ventas(ventas_fecha)
-                                    else:
-                                        print("No se encontraron ventas para la fecha especificada.")
+                                    os.system("cls")
+                                    leer_datos_ventas(archivo_ventas)
+                                    venta_busqueda = buscar_venta(fecha)
+                                    print(venta_busqueda)
+                                    os.system("pause")
                                     break
-
-
-
                     elif op == 3:
+                        os.system("cls")
                         if len(catalogo) == 0:
                             print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                         else:
@@ -360,35 +418,32 @@ while opcion != 5:
                     if opc >= 1 and opc <= 6:
                         match opc:
                             case 1: #AGREGAR PRODUCTOS
+                                os.system("cls")
                                 if len(catalogo) == 0:
                                     print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                                 else:
-                                    print('\n agregar productos\n')
-                                    id = int(input('Ingrese el id del avion: '))
-                                    modelo = input('Ingrese el modelo del avion: ')
-                                    marca = input('Ingrese la marca del avion: ')
-                                    año = input('Ingrese el año del avion: ')
-                                    consumo = input('Ingrese el consumo del avion (xx lt/hr): ')
-                                    unidades = int(input('Ingrese las unidades que existen del avion (xx): '))
-                                    horas_totales = int(input('Ingrese las horas totales del avion : '))
-                                    precio = int(input('Ingrese el precio del avion: '))
+                                    print(pyfiglet.figlet_format("Agregar Producto"))
+                                    id, modelo, marca, año, consumo, unidades, horas_totales, precio = validar_datos(catalogo)
                                     agregar_datos(id, modelo, marca, año, consumo, unidades, horas_totales, precio)
+                                    print('\nDatos agregados con éxito!')
                             case 2: # BUSCAR PRODUCTO
+                                os.system("cls")
                                 if len(catalogo) == 0:
                                     print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                                 else:
-                                    print('\n buscar producto\n')
+                                    print(pyfiglet.figlet_format("Buscar Producto"))
                                     id = int(input('Ingrese el id del avion que desea buscar: '))
                                     lista = buscar(id)
                                     if lista != -1:
-                                        print(lista)
+                                        print(f'''Modelo: {lista['Modelo']} ; Marca: {lista['Marca']} ; Año: {lista['Año']} ; Consumo: {lista['Consumo']} ; Unidades: {lista['Unidades']} ; Horas Totales: {lista['Horas de vuelo']} ; Precio: ${lista['Precio']}''')
                                     else:
                                         print('No se encontró el producto')
                             case 3: # ELIMINAR PRODUCTO
+                                os.system("cls")
                                 if len(catalogo) == 0:
                                     print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                                 else:
-                                    print('\n eliminar producto\n')
+                                    print(pyfiglet.figlet_format("Eliminar Producto"))
                                     id = int(input('Ingrese un ID a eliminar: '))
                                     lista = eliminar(id)
                                     if lista != -1:
@@ -396,32 +451,30 @@ while opcion != 5:
                                     else:
                                         print('No se encontró el producto')
                             case 4: #MODIFICAR SEGUN ID INGRESADA
+                                os.system("cls")
                                 if len(catalogo) == 0:
                                     print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                                 else:
-                                    print('modificar por ID')
+                                    print(pyfiglet.figlet_format("Modificar Producto"))
                                     id_a_modificar = int(input('Ingrese un id para buscar: '))
                                     lista = buscar(id_a_modificar)
                                     if lista != -1:
                                         print('ID encontrado!')
-                                        print(lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7])
+                                        print(f'''Modelo: {lista['Modelo']} ; Marca: {lista['Marca']} ; Año: {lista['Año']} ; Consumo: {lista['Consumo']} ; Unidades: {lista['Unidades']} ; Horas Totales: {lista['Horas de vuelo']} ; Precio: ${lista['Precio']}''')
                                         print('\n')
-                                        nuevo_modelo = input('Ingrese el nuevo modelo: ')
-                                        nueva_marca = input('Ingrese la nueva marca: ')
-                                        nuevo_año = input('Ingrese el nuevo año: ')
-                                        nuevo_consumo = input('Ingrese el nuevo consumo: ')
-                                        nueva_unidad = int(input('Ingrese las unidades del avion: '))
-                                        nueva_horas_totales = int(input('Ingrese las nuevas horas totales: '))
-                                        nuevo_precio = int(input('Ingrese el nuevo precio: '))
+                                        
+                                        id_validado, nuevo_modelo, nueva_marca, nuevo_año, nuevo_consumo, nueva_unidad, nueva_horas_totales, nuevo_precio = validar_datos(catalogo)
                                         modificar(id_a_modificar, nuevo_modelo, nueva_marca, nuevo_año, nuevo_consumo, nueva_unidad, nueva_horas_totales, nuevo_precio)
-                                        print('\n Nuevos datos actualizados con exito!')
+                                        
+                                        print('\nNuevos datos actualizados con éxito!')
                                     else:
                                         print('Error, ID no existe')
                             case 5: #LISTAR LOS PRODUCTOS EXISTENTES
+                                os.system("cls")
                                 if len(catalogo) == 0:
                                     print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
                                 else:
-                                    print('\n listar productos\n')
+                                    print(pyfiglet.figlet_format("Lista de Productos"))
                                     lista_aviones = leer_datos_productos(productos)
                                     imprimir_datos(lista_aviones)
                     if opc == 6:
@@ -443,7 +496,7 @@ while opcion != 5:
                         ''')
                     op = int(input('Ingrese una opción: '))
                     if op == 1:
-                        cargar_datos()
+                        catalogo, ventas = cargar_datos()
                         os.system('pause')
                         os.system('cls')
                         break
@@ -465,4 +518,3 @@ while opcion != 5:
     except ValueError:
         print('Error, Ingrese solo numeros')
         os.system('pause')
-        
