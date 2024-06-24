@@ -244,6 +244,7 @@ def validar_datos(catalogo):
 def menu_vender():
     while True:
         if len(catalogo) == 0:
+            os.system("cls")
             print('Error, datos no encontrados, cargue los datos en caso de ser necesario.')
             os.system('pause')
             break
