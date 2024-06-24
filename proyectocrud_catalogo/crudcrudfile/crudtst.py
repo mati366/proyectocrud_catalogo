@@ -4,12 +4,8 @@ import pyfiglet
 
 os.system('cls')
 
-# es un numero correlativo (folio=folio+1)
-# Folio comienza desde folio=10000
 catalogo = [ ]
 
-#       folio,  fecha id,cantidad, total
-# 20 Ventas
 ventas = [ ]
 
 # Nombre del productos
