@@ -363,12 +363,11 @@ while opcion != 5:
                         else:
                             while True:
                                 fecha = input('Ingrese la fecha (dd-mm-yyyy): ')
-                                # Validar formatos incorrectos
+                                
                                 if "/" in fecha or len(fecha) != 10:
                                     os.system("cls")
                                     print("Error, debe ingresar la fecha con este formato (dd-mm-yyyy)")
                                     continue
-                                # Validar el formato correcto de la fecha
                                 else:
                                     os.system("cls")
                                     leer_datos_ventas(archivo_ventas)
