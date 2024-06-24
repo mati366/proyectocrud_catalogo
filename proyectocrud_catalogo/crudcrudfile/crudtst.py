@@ -510,7 +510,7 @@ while opcion != 5:
                             break
                         else:
                             os.system('cls')
-                            print("Datos no cargados, por favor, cargue los datos para trabajar con estos.")
+                            print("Datos no cargados correctamente, por favor, cargue los datos para trabajar con estos.")
                             os.system("pause")
                             os.system('cls')
                             continue
