@@ -268,6 +268,7 @@ def menu_vender():
                 os.system("cls")
                 continue
             else:
+                os.system("cls")
                 print('\nCaracteristicas del avion a comprar:\n')
                 print(f'''Modelo: {lista['Modelo']} ; Marca: {lista['Marca']} ; Año: {lista['Año']} ; Consumo: {lista['Consumo']} ; Unidades: {lista['Unidades']} ; Horas Totales: {lista['Horas de vuelo']} ; Precio: ${lista['Precio']}''')
                 try:
@@ -275,7 +276,7 @@ def menu_vender():
                 except ValueError:
                     print('Error, ingrese una cantidad valida')
                     continue
-                if cantidad_comprar > lista['Unidades']:
+                if cantidad_comprar > lista['Unidades'] or cantidad_comprar <= 0:
                     os.system('cls')
                     decision = input('Stock no valido, desea volver a intentarlo? (si/no): ')
                     if decision.lower() == 'si':
