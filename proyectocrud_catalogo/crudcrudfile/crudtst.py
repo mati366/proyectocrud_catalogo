@@ -480,15 +480,15 @@ while opcion != 5:
             case 4: # ADMINISTRACIÓN
                 os.system('cls')
                 op = 0
-                while op != 3:
+                while op != 4:
                     print(pyfiglet.figlet_format("administracion"))
                     print('''
                        
                         ----------------
                         1. Cargar datos
                         2. Respaldar datos
-                        444. Test
-                        3. Salir
+                        3. Revisar datos actuales
+                        4. Salir
                         ''')
                     op = int(input('Ingrese una opción: '))
                     if op == 1:
@@ -502,9 +502,20 @@ while opcion != 5:
                         os.system('cls')
                         break
                     elif op == 3:
+                        if len(catalogo) > 0 and len(ventas) > 0:
+                            os.system('cls')
+                            print("Datos actualmente cargados con exito")
+                            os.system("pause")
+                            os.system('cls')
+                            break
+                        else:
+                            os.system('cls')
+                            print("Datos no cargados, por favor, cargue los datos para trabajar con estos.")
+                            os.system("pause")
+                            os.system('cls')
+                            continue
+                    elif op == 4:
                         break
-                    elif op == 444:
-                        print('El largo de los productos es:', len(catalogo), 'y el largo de las ventas es: ' ,len(ventas))
                     else:
                         print('Opción incorrecta.')
                         os.system('pause')
