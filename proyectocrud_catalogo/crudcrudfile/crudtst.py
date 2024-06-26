@@ -474,9 +474,13 @@ while opcion != 5:
                                     print(pyfiglet.figlet_format("Lista de Productos"))
                                     lista_aviones = leer_datos_productos(productos)
                                     imprimir_datos(lista_aviones)
-                    if opc == 6:
-                        break
+                            case 6:
+                                break
+                    else:
+                        os.system("cls")
+                        print("Error, opcion incorrecta, seleccione una opción valida")
                     os.system('pause')
+                    continue
 
             case 4: # ADMINISTRACIÓN
                 os.system('cls')
@@ -518,11 +522,19 @@ while opcion != 5:
                     elif op == 4:
                         break
                     else:
+                        os.system('cls')
                         print('Opción incorrecta.')
                         os.system('pause')
             case 5: #SALIDA DEL SISTEMA
+                os.system('cls')
                 print('Saliendo del sistema...')
                 break
+            case _:
+                os.system('cls')
+                print('Opción incorrecta, ingrese una opción valida.')
+                os.system('pause')
+                os.system('cls')
     except ValueError:
+        os.system('cls')
         print('Error, Ingrese solo numeros')
         os.system('pause')
